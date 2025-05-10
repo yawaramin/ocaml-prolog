@@ -11,7 +11,6 @@
 
 open Types
 
-exception Unsuported_term
 exception Type_error
 
 (* appends a replacement to a term *)
@@ -39,7 +38,7 @@ let rec replace term replacement =
       
       
 (* adds new variable replacement to given replacement *)
-let rec add_replacement (var, term) replacement =
+let add_replacement (var, term) replacement =
   let replace_rep (var', term') =
     (* replaces variable var if it is in the replacement *)
     (var', replace term' [(var, term)])   
@@ -54,7 +53,7 @@ let rec unify term1 term2 rep =
   let rec unify_args args1 args2 rep = (* unifies arguments of functors *)
     match args1, args2 with
     | [], _ -> (true, rep)
-    | term1 :: terms1, [] -> raise Type_error
+    | _ :: _, [] -> raise Type_error
     | term1 :: terms1, term2::terms2 -> 
       let uni = unify term1 term2 rep
       in

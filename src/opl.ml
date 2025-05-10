@@ -9,15 +9,9 @@
   (at your option) any later version.
 *)
 
-open Interpreter
+open Lib
 
-let load_file f =
-  let ic = open_in f in
-  let n = in_channel_length ic in
-  let s = String.create n in
-    really_input ic s 0 n;
-    close_in ic;
-    s
+let load_file f = In_channel.with_open_bin f In_channel.input_all
 
 let concat_files filenames =
   List.map load_file filenames |>
@@ -35,6 +29,8 @@ let rec loop_forever thunk =
   thunk ();
   loop_forever thunk
 
+let parse_err_msg = "Parse error. Did you forget a dot?"
+
 let read_eval_print database behaviour =
   prompt ();
 
@@ -45,10 +41,11 @@ let read_eval_print database behaviour =
     in
       Limit.get_limit behaviour.limit |> repeat execute
   with
-  | Failure ("lexing: empty token")    (* lexing failure *)
-  | Parsing.Parse_error ->             (* parsing failure *)
-    print_endline "Parse error. Did you forget a dot?"
-  | Failure s -> print_endline ("Failed: " ^ s) 
+  | Parsing.Parse_error ->
+    print_endline parse_err_msg
+  | Failure s ->
+    let msg = if s = "lexing: empty token" then parse_err_msg else "Failed: " ^ s in
+    print_endline msg
 
 let repl database behaviour = 
   try 
@@ -78,7 +75,7 @@ let main () =
     else ();
 
     let behaviour = {
-      randomise = !randomise;
+      Interpreter.randomise = !randomise;
       interactive = !interactive;
       quiet = !quiet;
       limit = Limit.set_limit !limit;
@@ -90,5 +87,4 @@ let main () =
 
       repl database behaviour
 
-let _ = 
-  main ()  
+let () = main ()

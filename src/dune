@@ -1,0 +1,4 @@
+(executable
+ (name opl)
+ (public_name opl.exe)
+ (libraries opl.lib))

@@ -8,8 +8,6 @@
   the Free Software Foundation, either version 3 of said Licence, or
   (at your option) any later version.
 *)
-open Types
-
 type interp_behaviour = {
   randomise : bool;
   interactive : bool;

@@ -16,13 +16,13 @@ let rec get_variables term list =
 	  list |> get_variables t |> get_vars_from_args terms
   in
 	match term with
-    | TermBinOp (op, t1, t2) ->
+    | TermBinOp (_, t1, t2) ->
 	  list |> get_variables t1 |> get_variables t2
 	| TermVariable v ->  (* is this in List.??? *)
 	  if List.exists (fun var -> var = v) list 
 	  then list 
 	  else v :: list
-	| TermFunctor (nam, args) -> get_vars_from_args args list
+	| TermFunctor (_, args) -> get_vars_from_args args list
 	| TermNegation t -> get_variables t list
 	| TermList listterm -> listterm |> (function
 	  | EmptyList -> list
@@ -167,7 +167,7 @@ let evaluate term database rep clauses sc fc cut_c randomise =
 	  | TermNegation t ->
 		evaluate t database rep clauses
 		  (fun vt fc' -> sc (not (fst vt), snd vt) fc') fc cut_c
-	  | TermFunctor(nam,args) -> 
+	  | TermFunctor(_,_) ->
 		functor_eval repterm database rep clauses sc fc cut_c
 	  | TermCut -> sc (true,rep) cut_c
 	  | _ -> raise Cant_evaluate

@@ -10,8 +10,6 @@
 *)
 
 open Types
-open Unification
-open Var
 
 module Limit = struct
 include Limit
